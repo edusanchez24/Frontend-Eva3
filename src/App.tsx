@@ -110,6 +110,7 @@ function App() {
       }
       return [...current, { key, product, size, quantity: 1 }]
     })
+    setCartOpen(true)
     setNotice(`${product.nombre} se agregó al carrito`)
     setTimeout(() => setNotice(''), 2500)
   }
@@ -201,25 +202,25 @@ function App() {
       <main>
         <section className="hero">
           <div className="hero-copy">
-            <p className="eyebrow">NUEVA COLECCIÓN · 2025</p>
-            <h1>Tu estilo.<br /><em>Tu momento.</em></h1>
-            <p className="hero-description">Piezas pensadas para acompañarte todos los días. Diseño consciente, materiales nobles y mucha personalidad.</p>
-            <a className="primary-button" href="#catalogo">Explorar colección <span>→</span></a>
+            <p className="eyebrow">INVENTARIO EVA · ZAPATILLAS URBANAS</p>
+            <h1>Corre tu<br /><em>propio ritmo.</em></h1>
+            <p className="hero-description">Zapatillas urbanas y deportivas seleccionadas para moverte cómodo, entrenar fuerte y marcar tu estilo.</p>
+            <a className="primary-button" href="#catalogo">Ver zapatillas <span>→</span></a>
           </div>
           <div className="hero-art" aria-hidden="true">
             <div className="sun"></div><div className="arch"></div>
-            <div className="model-shape"></div><div className="plant plant-one"></div><div className="plant plant-two"></div>
+            <div className="hero-shoe"><ShoeIllustration /></div>
             <span className="hero-tag">EVA / 03</span>
           </div>
         </section>
 
         <section className="trust-row">
-          <span><b>✦</b> Diseño local</span><span><b>◌</b> Envíos a todo Chile</span><span><b>♡</b> Hecho para durar</span>
+          <span><b>✦</b> Stock actualizado</span><span><b>◌</b> Envíos a todo Chile</span><span><b>♡</b> Cambios simples</span>
         </section>
 
         <section className="catalog-section" id="catalogo">
           <div className="section-heading">
-            <div><p className="eyebrow">PARA TI</p><h2>Descubre tu próxima<br /><em>pieza favorita.</em></h2></div>
+            <div><p className="eyebrow">INVENTARIO / {products.length} MODELOS</p><h2>Encuentra tu próxima<br /><em>zapatilla.</em></h2></div>
             <div className="search-wrap"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar productos..." aria-label="Buscar productos" /></div>
           </div>
           {error && <div className="alert" role="alert">{error}<button onClick={() => setError('')}>×</button></div>}
@@ -249,15 +250,19 @@ function ProductCard({ product, index, onAdd }: { product: Product; index: numbe
   const [selectedSize, setSelectedSize] = useState<Size | undefined>(product.tallas[0])
   const available = selectedSize?.stock ?? product.stock
   return <article className={`product-card tone-${index % 4}`}>
-    <div className="product-image"><span className="product-number">0{index + 1}</span><div className="product-blob"></div><span className="product-label">{product.nombre.slice(0, 1)}</span>{!product.activo && <span className="sold-out">Agotado</span>}</div>
-    <div className="product-info"><div><h3>{product.nombre}</h3><p>{product.descripcion || 'Diseño esencial para todos los días.'}</p></div><strong>{formatPrice(product.precio)}</strong></div>
+    <div className="product-image"><span className="product-number">0{index + 1}</span><ShoeIllustration /><span className="stock-badge">{available} un.</span>{!product.activo && <span className="sold-out">Agotado</span>}</div>
+    <div className="product-info"><div><h3>{product.nombre}</h3><p>{product.codigo ? `SKU ${product.codigo}` : (product.descripcion || 'Zapatilla urbana')}</p></div><strong>{formatPrice(product.precio)}</strong></div>
     {product.tallas.length > 0 && <div className="size-list" aria-label="Seleccionar talla">{product.tallas.map((size) => <button className={selectedSize?.id === size.id ? 'selected' : ''} disabled={size.stock === 0} onClick={() => setSelectedSize(size)} key={size.id}>{size.talla}</button>)}</div>}
     <button className="add-button" disabled={!product.activo || available === 0} onClick={() => onAdd(product, selectedSize)}>{available === 0 ? 'Sin stock' : 'Agregar al carrito'} <span>+</span></button>
   </article>
 }
 
+function ShoeIllustration() {
+  return <div className="shoe-illustration" aria-hidden="true"><div className="shoe-upper"><i></i><i></i><i></i></div><div className="shoe-sole"></div></div>
+}
+
 function CartDrawer({ cart, total, rut, setRut, onClose, onUpdate, onCheckout, busy, authenticated }: { cart: CartItem[]; total: number; rut: string; setRut: (value: string) => void; onClose: () => void; onUpdate: (key: string, amount: number) => void; onCheckout: () => void; busy: boolean; authenticated: boolean }) {
-  return <div className="drawer-backdrop" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><aside className="cart-drawer"><div className="drawer-heading"><div><p className="eyebrow">TU SELECCIÓN</p><h2>Carrito <span>{cart.length}</span></h2></div><button className="close-button" onClick={onClose}>×</button></div>{cart.length === 0 ? <div className="empty-cart"><span>♡</span><p>Tu carrito está esperando<br />algo especial.</p></div> : <><div className="cart-items">{cart.map((item) => <div className="cart-item" key={item.key}><div className="mini-product">{item.product.nombre.slice(0, 1)}</div><div className="cart-item-copy"><strong>{item.product.nombre}</strong><small>{item.size ? `Talla ${item.size.talla}` : 'Talla única'}</small><b>{formatPrice(item.product.precio * item.quantity)}</b></div><div className="quantity"><button onClick={() => onUpdate(item.key, -1)}>−</button><span>{item.quantity}</span><button onClick={() => onUpdate(item.key, 1)}>+</button></div></div>)}</div><div className="cart-summary"><div><span>Subtotal</span><strong>{formatPrice(total)}</strong></div><small>Envío calculado al confirmar la compra.</small><label>RUT del cliente<input value={rut} onChange={(event) => setRut(event.target.value)} placeholder="12345678-9" /></label><button className="primary-button full" onClick={onCheckout} disabled={busy}>{busy ? 'Procesando...' : authenticated ? 'Confirmar compra →' : 'Inicia sesión para comprar →'}</button></div></>}</aside></div>
+  return <div className="drawer-backdrop" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><aside className="cart-drawer"><div className="drawer-heading"><div><p className="eyebrow">PRODUCTOS AGREGADOS</p><h2>Carrito <span>{cart.length}</span></h2></div><button className="close-button" onClick={onClose}>×</button></div>{cart.length === 0 ? <div className="empty-cart"><span>♡</span><p>Tu carrito está esperando<br />una zapatilla.</p></div> : <><div className="cart-items">{cart.map((item) => <div className="cart-item" key={item.key}><div className="mini-product"><ShoeIllustration /></div><div className="cart-item-copy"><strong>{item.product.nombre}</strong><small>{item.product.codigo ? `SKU ${item.product.codigo} · ` : ''}{item.size ? `Talla ${item.size.talla}` : 'Talla única'}</small><b>{formatPrice(item.product.precio * item.quantity)}</b></div><div className="quantity"><button onClick={() => onUpdate(item.key, -1)}>−</button><span>{item.quantity}</span><button onClick={() => onUpdate(item.key, 1)}>+</button></div></div>)}</div><div className="cart-summary"><div><span>Subtotal</span><strong>{formatPrice(total)}</strong></div><small>Envío calculado al confirmar la compra.</small><label>RUT del cliente<input value={rut} onChange={(event) => setRut(event.target.value)} placeholder="12345678-9" /></label><button className="primary-button full" onClick={onCheckout} disabled={busy}>{busy ? 'Procesando...' : authenticated ? 'Confirmar compra →' : 'Inicia sesión para comprar →'}</button></div></>}</aside></div>
 }
 
 export default App
