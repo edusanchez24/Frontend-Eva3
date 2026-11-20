@@ -1,0 +1,157 @@
+<!-- inventario/templates/inventario/base.html -->
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}SNEAK//CTRL{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style type="text/tailwindcss">
+        @theme {
+            --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+            --font-display: "Barlow Condensed", Impact, sans-serif;
+        }
+
+        @layer base {
+            body {
+                @apply min-h-screen font-sans text-slate-900 antialiased;
+                background-image:
+                    radial-gradient(circle at 15% 0%, rgba(37, 99, 235, .08), transparent 34rem),
+                    linear-gradient(145deg, #f8fafc 0%, #eef2f7 52%, #e5eaf1 100%);
+                background-size: auto;
+                background-attachment: fixed;
+            }
+
+            ::selection { background: #bfdbfe; color: #0f172a; }
+        }
+
+        @layer components {
+            .display-font { font-family: var(--font-display); }
+            .street-panel { @apply rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70; }
+            input, select, textarea { @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100; }
+        }
+
+        /* Compatibility layer for the existing utility markup. */
+        [class~="text-red-600"] { color: #2563eb !important; }
+        [class~="text-red-700"] { color: #1d4ed8 !important; }
+        [class~="text-lime-400"], [class~="text-lime-500"] { color: #93c5fd !important; }
+        [class~="bg-lime-300"] { background-color: #dbeafe !important; }
+        [class~="bg-lime-400"] { background-color: #2563eb !important; }
+        [class~="bg-red-100"], [class~="bg-red-200"], [class~="bg-red-300"] { background-color: #dbeafe !important; }
+        [class~="hover:bg-red-600"]:hover { background-color: #1d4ed8 !important; }
+        [class~="hover:bg-lime-100"]:hover { background-color: #eff6ff !important; }
+        [class*="shadow-["] { box-shadow: 0 12px 30px rgba(15, 23, 42, .10) !important; }
+        [class~="border-2"] { border-width: 1px !important; }
+        [class~="border-stone-950"] { border-color: #cbd5e1 !important; }
+        [class~="bg-stone-950"] { background-color: #0f172a !important; }
+        [class~="text-stone-950"] { color: #0f172a !important; }
+        [class~="text-stone-300"] { color: #cbd5e1 !important; }
+        [class~="text-stone-500"], [class~="text-stone-600"] { color: #64748b !important; }
+        [class~="bg-[#f8f6ef]"] { background-color: #ffffff !important; }
+    </style>
+</head>
+
+<body>
+    <a href="#contenido" class="sr-only z-50 bg-stone-950 px-4 py-3 font-semibold text-white focus:not-sr-only focus:absolute focus:left-4 focus:top-4">Saltar al contenido</a>
+    <header class="border-b border-slate-800 bg-slate-950 px-4 py-4 text-white sm:px-6">
+        <nav aria-label="Navegacion principal" class="mx-auto flex max-w-6xl items-center justify-between">
+            <a href="{% url 'producto_list' %}" class="group flex items-center gap-3 font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400">
+                <span class="flex size-10 items-center justify-center rounded-lg bg-blue-600 text-white transition group-hover:bg-blue-500" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.07a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6.27A2.25 2.25 0 0 1 6 4.02h4.08M15.75 3.52H20.5m0 0v4.75m0-4.75L12 12.02" /></svg>
+                </span>
+                <span class="display-font text-2xl font-bold uppercase tracking-wide">SNEAK<span class="text-blue-400">//</span>CTRL</span>
+            </a>
+            <div class="flex items-center gap-1 sm:gap-2">
+                <a href="{% url 'producto_list' %}" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3.75h19.5v16.5H2.25V3.75ZM2.25 9h19.5M8.25 9v11.25" /></svg>
+                    <span class="hidden sm:inline">Productos</span>
+                    <span class="sr-only sm:hidden">Productos</span>
+                </a>
+                <a href="{% url 'venta_list' %}" class="inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.5h16.5v15H3.75v-15Zm0 4.5h16.5M8.25 4.5v15" /></svg>
+                    <span class="hidden sm:inline">Ventas</span>
+                    <span class="sr-only sm:hidden">Ventas</span>
+                </a>
+                <button type="button" data-open-login class="ml-1 rounded-lg border border-blue-400 px-3 py-2 text-xs font-bold uppercase text-blue-300 transition hover:bg-blue-600 hover:text-white">Acceso API</button>
+            </div>
+        </nav>
+    </header>
+    <main id="contenido" class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+        {% if messages %}<div class="mx-auto mb-6 max-w-6xl space-y-2">{% for message in messages %}<div class="border-2 border-stone-950 bg-lime-300 px-4 py-3 text-sm font-semibold text-stone-950">{{ message }}</div>{% endfor %}</div>{% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <div id="api-login" class="fixed inset-0 z-40 hidden items-center justify-center bg-stone-950/70 px-4" role="dialog" aria-modal="true" aria-labelledby="api-login-title">
+        <form data-login-form class="w-full max-w-md border-2 border-stone-950 bg-[#f8f6ef] p-6 shadow-[8px_8px_0_#c7f000]">
+            <div class="mb-5 flex items-start justify-between gap-4">
+                <div><p class="text-xs font-bold uppercase tracking-[0.2em] text-red-600">Cliente REST</p><h2 id="api-login-title" class="display-font text-3xl font-bold uppercase">Iniciar sesion</h2></div>
+                <button type="button" data-close-login class="text-2xl leading-none" aria-label="Cerrar">&times;</button>
+            </div>
+            <label class="mb-2 block text-sm font-bold" for="api-username">Usuario</label>
+            <input id="api-username" name="username" required autocomplete="username">
+            <label class="mb-2 mt-4 block text-sm font-bold" for="api-password">Contrasena</label>
+            <input id="api-password" name="password" type="password" required autocomplete="current-password">
+            <button type="submit" class="mt-5 w-full border-2 border-stone-950 bg-stone-950 px-4 py-3 font-bold text-white hover:bg-red-600" data-login-submit>Obtener token</button>
+        </form>
+    </div>
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden border-2 border-stone-950 bg-lime-300 px-4 py-3 text-sm font-bold shadow-[4px_4px_0_#1c1c1b]" role="status"></div>
+    <script>
+        (() => {
+            const modal = document.querySelector('#api-login');
+            const toast = document.querySelector('#toast');
+            const showToast = (message, error = false) => {
+                toast.textContent = message;
+                toast.classList.toggle('bg-red-300', error);
+                toast.classList.toggle('bg-lime-300', !error);
+                toast.classList.remove('hidden');
+                window.setTimeout(() => toast.classList.add('hidden'), 3500);
+            };
+            document.querySelector('[data-open-login]')?.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.querySelector('#api-username').focus();
+            });
+            document.querySelector('[data-close-login]')?.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+            document.querySelector('[data-login-form]')?.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const button = event.currentTarget.querySelector('[data-login-submit]');
+                button.disabled = true;
+                button.textContent = 'Validando...';
+                try {
+                    const response = await fetch('/api/token/', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(Object.fromEntries(new FormData(event.currentTarget))),
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail || 'Credenciales invalidas.');
+                    sessionStorage.setItem('sneakctrl_access', data.access);
+                    sessionStorage.setItem('sneakctrl_refresh', data.refresh);
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    showToast('Sesion API iniciada correctamente.');
+                } catch (error) {
+                    showToast(error.message, true);
+                } finally {
+                    button.disabled = false;
+                    button.textContent = 'Obtener token';
+                }
+            });
+            window.sneakCtrlFetch = (url, options = {}) => {
+                const token = sessionStorage.getItem('sneakctrl_access');
+                return fetch(url, {
+                    ...options,
+                    headers: {'Content-Type': 'application/json', ...(token ? {'Authorization': `Bearer ${token}`} : {}), ...(options.headers || {})},
+                });
+            };
+        })();
+    </script>
+</body>
+
+</html>
